@@ -13,10 +13,10 @@ namespace MauiSyncOutlookCalendar
             MainPage = new MainPage();
 
             //// You need to replace your Application or Client ID
-            clientID = "09893c5e-c8e6-4652-9e11-43baa5422854";
+            clientID = "";
 
             //// You need to replace your tenant ID
-            tenantID = "77f1fe12-b049-4919-8c50-9fb41e5bb63b";
+            tenantID = "";
 
             authority = "https://login.microsoftonline.com/" + tenantID;
 
