@@ -4,13 +4,11 @@ namespace MauiSyncOutlookCalendar
 {
     public partial class App : Application
     {
-        internal static IPublicClientApplication ClientApplication;
+        internal static IPublicClientApplication? ClientApplication;
         private string clientID, tenantID, authority;
         public App()
         {
             InitializeComponent();
-
-            MainPage = new MainPage();
 
             //// You need to replace your Application or Client ID
             clientID = "";
