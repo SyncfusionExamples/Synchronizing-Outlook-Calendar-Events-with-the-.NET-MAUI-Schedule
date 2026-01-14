@@ -12,14 +12,14 @@ namespace MauiSyncOutlookCalendar
 {
     public class SchedulerViewModel
     {
-        private GraphServiceClient Client;
+        private GraphServiceClient? Client;
         private static string[] scopes = { "User.Read", "Calendars.Read", "Calendars.ReadWrite" };
 
-        public ObservableCollection<Meeting> Meetings { get; set; }
+        public ObservableCollection<Meeting> Meetings { get; set; } = new ObservableCollection<Meeting>();
 
-        public ICommand ImportButtonCommand { get; set; }
+        public ICommand? ImportButtonCommand { get; set; }
 
-        public ICommand ExportButtonCommand { get; set; }
+        public ICommand? ExportButtonCommand { get; set; }
 
         public SchedulerViewModel()
         {
@@ -97,6 +97,10 @@ namespace MauiSyncOutlookCalendar
         private async void Authenticate(bool import)
         {
             AuthenticationResult tokenRequest;
+            if(App.ClientApplication == null)
+            {
+                return;
+            }
             var accounts = await App.ClientApplication.GetAccountsAsync();
             if (accounts.Count() > 0)
             {
@@ -147,7 +151,7 @@ namespace MauiSyncOutlookCalendar
                     },
                 };
                 //// Request to add Syncfusion Scheduler event to the Outlook Calendar events.
-                Client.Me.Events.Request().AddAsync(calendarEvent);
+                Client?.Me.Events.Request().AddAsync(calendarEvent);
             }
         }
 
@@ -157,11 +161,15 @@ namespace MauiSyncOutlookCalendar
         private void GetOutlookCalendarEvents()
         {
             //// Request to get the outlook calendar events.
-            var events = Client.Me.Events.Request().GetAsync().Result.ToList();
+            var events = Client?.Me.Events.Request().GetAsync().Result.ToList();
             if (events != null && events.Count > 0)
             {
                 foreach (Event appointment in events)
                 {
+                    if(appointment.IsAllDay == null)
+                    {
+                        continue;
+                    }   
                     Meeting meeting = new Meeting()
                     {
                         EventName = appointment.Subject,
@@ -187,6 +195,10 @@ namespace MauiSyncOutlookCalendar
         private static void AddRecurrenceRule(Event appointment, Meeting meeting)
         {
             // Creating recurrence rule
+            if (appointment.Recurrence.Pattern.Interval == null)
+            {
+                return;
+            }
             SchedulerRecurrenceInfo recurrenceProperties = new SchedulerRecurrenceInfo();
             if (appointment.Recurrence.Pattern.Type == RecurrencePatternType.Daily)
             {
